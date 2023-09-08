@@ -1,3 +1,6 @@
+import { recipesToShow, ingredientArray, applianceArray, ustensilsArray } from '../../index.js'
+import { ControllerRecipes } from '../controller/recipeController.js'
+
 export class ViewRecipes {
 	constructor(controller) {
 		this.controller = controller
@@ -11,6 +14,7 @@ export class ViewRecipes {
 		const recipeSnippet = document.getElementById('recipes-zone')
 
 		recipeSnippet.innerHTML = ''
+
 		recipesToShow.forEach((recipe) => {
 			// Je normalise le nom de la recette pour pouvoir l'utiliser dynamiquement comme nom d'image
 			const imageName = recipe.name
@@ -19,6 +23,8 @@ export class ViewRecipes {
 				.replace(/[\u0300-\u036f]/g, '')
 				.split(' ')
 				.join('-')
+
+			// Je crée une div pour chaque recette et je l'insère dans la div recipes-zone
 			recipeSnippet.innerHTML += `
         <div id="card-container" class="col-12 col-lg-4">
                     <article class="card h-100 border-0">
@@ -54,25 +60,100 @@ export class ViewRecipes {
                 </div>        
         `
 		})
+
+		// Mise à jour de la sélection des éléments de la liste des mots-clés
+		// this.controller.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
 	}
 }
 
+// je crée une classe pour gérer les tags de filtre
 export class FilterTagView {
 	constructor(controller) {
 		this.controller = controller
-		this.displayFilterTag = this.displayFilterTag.bind(this)
+		this.add = this.add.bind(this)
+		this.remove = this.remove.bind(this)
 	}
 
-	displayFilterTag(tag) {
-		const filterTagSnippet = document.getElementById('filters-zone')
+	// Méthode pour ajouter un tag de filtre
+	add(tag, type) {
+		const filterTagSnippet = document.getElementById('tags-zone')
 
 		filterTagSnippet.innerHTML += `
-        <button id="filter-tag" type="button" class="btn btn-primary">
-            <span class="filter-tag-text">${tag}</span>
-            <span class="filter-tag-icon">
-                <img src="./assets/icons/close.svg" alt="icone de fermeture">
-            </span>
-        </button>
+        <button type="button" class="tag tag-${type}">${tag}
+                <img src="./assets/icons/tag-close.svg" alt="icone de fermeture du tag" class="tag-close">
+            </button>
         `
+	}
+
+	// Méthode pour supprimer un tag de filtre
+	remove(event) {
+		const tagToDelete = event.target.closest('.tag')
+		const tagContent = tagToDelete.textContent
+		console.log('tag supprimé :', tagContent)
+		// je récupère le contenu du tag pour pouvoir le supprimer du DOM
+		tagToDelete.style.display = 'none'
+	}
+}
+
+export class KeywordsView {
+	constructor(controller) {
+		this.controller = controller
+		this.displayKeywordsList = this.displayKeywordsList.bind(this)
+		this.ingredientlist = []
+		this.applianceList = []
+		this.ustensilsList = []
+		// this.controller.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+		this.ingredientButtonList = document.getElementById('ingredientList')
+		this.applianceButtonList = document.getElementById('applianceList')
+		this.ustensilsButtonList = document.getElementById('ustensilsList')
+	}
+
+	displayKeywordsList(recipesToShow, keywordsToClick) {
+		// const ingredientButtonList = document.getElementById('ingredientList')
+		// const applianceButtonList = document.getElementById('applianceList')
+		// const ustensilsButtonList = document.getElementById('ustensilsList')
+
+		this.ingredientButtonList.innerHTML = ''
+		this.applianceButtonList.innerHTML = ''
+		this.ustensilsButtonList.innerHTML = ''
+
+		recipesToShow.forEach((recipe) => {
+			// Je crée un tableau avec les ingrédients, appareils et ustensiles de chaque recette et je supprime les doublons
+			recipe.ingredients.map((ingredient) => {
+				this.ingredientlist.push(`${ingredient.ingredient}`)
+			})
+			this.applianceList.push(`${recipe.appliance}`)
+			recipe.ustensils.map((ustensil) => {
+				this.ustensilsList.push(`${ustensil}`)
+			})
+
+			// Je supprime les doublons de mes 3 listes grâce à l'opérateur spread et la méthode Set
+			this.ingredientlist = [...new Set(this.ingredientlist)]
+			this.applianceList = [...new Set(this.applianceList)]
+			this.ustensilsList = [...new Set(this.ustensilsList)]
+
+			// Je crée les listes d'ingrédients, appareils et ustensiles correspondants aux recettes affichées
+			this.ingredientButtonList.innerHTML += `
+		${this.ingredientlist
+			.map((ingredient) => {
+				return `<li>${ingredient}</li>`
+			})
+			.join('')}
+		`
+			this.applianceButtonList.innerHTML += `
+		${this.applianceList
+			.map((appliance) => {
+				return `<li>${appliance}</li>`
+			})
+			.join('')}
+		`
+			this.ustensilsButtonList.innerHTML += `
+		${this.ustensilsList
+			.map((ustensil) => {
+				return `<li>${ustensil}</li>`
+			})
+			.join('')}
+		`
+		})
 	}
 }

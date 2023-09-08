@@ -33,9 +33,14 @@ export class Recipes {
 	}
 
 	// Méthode pour filtrer les recettes par ustensile dans le tableau recipes à partir du tag sélectionné
-	ustensilSearch(recipes, tag) {
+	ustensilsSearch(recipes, tag) {
 		return recipes.filter((recipe) =>
 			recipe.ustensils.some((ustensil) => ustensil.toLowerCase().includes(tag.toLowerCase()))
 		)
+	}
+
+	// Méthode pour réinitialiser la recherche lorsque l'utilisateur efface le texte saisi dans la barre de recherche ou supprime les tags
+	resetSearch(recipes) {
+		return recipes
 	}
 }

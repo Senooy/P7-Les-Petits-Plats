@@ -21,81 +21,192 @@
         <img src="./assets/logo/logo.svg" alt="les petits plats">
     </header>
     <main class="container mt-3">
-        <section id="search-zone">
+
+        <!-- Zone de recherche -->
+        <div id="search-zone">
 
             <div class="input-group-sm">
                 <div class="input-box mx-auto">
-                    <input type="text" class="form-control border-0" placeholder="Rechercher une recette">
+                    <input type="text" class="form-control border-0 mb-4" placeholder="Rechercher une recette">
                     <img src="./assets/icons/search.svg" alt="icone loupe de la zone de recherche">
                 </div>
             </div>
 
-        </section>
-        <section id="tags-zone" class="mt3"></section>
-        <section id="filters-zone" class="mt-3">
+        </div>
+
+        <!-- Zone de tags -->
+        <div id="tags-zone" class="mt3 d-inline-flex flex-row justify-content-start align-items-center">
+            <!-- <button type="button" class="tag tag-ingredient">Ingredient 1
+                <img src="./assets/icons/tag-close.svg" alt="icone de fermeture du tag" class="tag-close">
+            </button>
+            <button type="button" class="tag tag-appliance">Appareil 2
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12.59 6L10 8.59L7.41 6L6 7.41L8.59 10L6 12.59L7.41 14L10 11.41L12.59 14L14 12.59L11.41 10L14 7.41L12.59 6ZM10 0C4.47 0 0 4.47 0 10C0 15.53 4.47 20 10 20C15.53 20 20 15.53 20 10C20 4.47 15.53 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z"
+                        fill="white" />
+                </svg>
+            </button>
+            <button type="button" class="tag tag-ustensil">Ustensile 3
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12.59 6L10 8.59L7.41 6L6 7.41L8.59 10L6 12.59L7.41 14L10 11.41L12.59 14L14 12.59L11.41 10L14 7.41L12.59 6ZM10 0C4.47 0 0 4.47 0 10C0 15.53 4.47 20 10 20C15.53 20 20 15.53 20 10C20 4.47 15.53 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z"
+                        fill="white" />
+                </svg>
+            </button> -->
+        </div>
+
+        <!-- Zone filtres de recettes -->
+        <div id="filters-zone" class="mt-3">
             <div class="d-lg-flex accordion" id="accordionFilterTags">
                 <div class="accordion-item me-lg-5">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                            aria-expanded="true" aria-controls="collapseOne">
-                            Ingredients
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                    <div class="accordion-header" id="headingOne">
+                        <div class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" role="combobox">
+                            <input id="ingredient-input" class="form-control text-white" type="text"
+                                placeholder="Ingredients" aria-label="input ingredients">
+                        </div>
+                    </div>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
                         data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse
-                            plugin adds the appropriate classes that we use to style each element. These classes control the overall
-                            appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with
-                            custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go
-                            within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <ul id="ingredientList">
+                                <!-- <li>A tester !</li>
+                                <li>chocolat</li>
+                                <li>Ingredient 3</li>
+                                <li>Ingredient 4</li>
+                                <li>Ingredient 5</li>
+                                <li>beurre</li>
+                                <li>Ingredient 7</li>
+                                <li>Ingredient 8</li>
+                                <li>very very long Ingredient 9</li>
+                                <li>Ingredient 10</li>
+                                <li>Ingredient 11</li>
+                                <li>coco</li>
+                                <li>Ingredient 13</li>
+                                <li>Ingredient 14</li>
+                                <li>Ingredient 15</li>
+                                <li>oeuf</li>
+                                <li>Ingredient 17</li>
+                                <li>Ingredient 18</li>
+                                <li>very very long Ingredient 19</li>
+                                <li>Ingredient 20</li>
+                                <li>Ingredient 21</li>
+                                <li>Ingredient 22</li>
+                                <li>Ingredient 23</li>
+                                <li>Ingredient 24</li>
+                                <li>Ingredient 25</li>
+                                <li>Ingredient 26</li>
+                                <li>Ingredient 27</li>
+                                <li>Ingredient 28</li>
+                                <li>very very long Ingredient 29</li>
+                                <li>Ingredient 30</li> -->
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="accordion-item me-lg-5">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Appareils
-                        </button>
-                    </h2>
+                <div class="accordion-item me-lg-5 mt-3 mt-lg-0">
+                    <div class="accordion-header" id="headingTwo">
+                        <div class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" role="combobox">
+                            <input id="appareil-input" class="form-control text-white" type="text"
+                                placeholder="Appareils" aria-label="input appliances">
+                        </div>
+                    </div>
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
                         data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse
-                            plugin adds the appropriate classes that we use to style each element. These classes control the overall
-                            appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with
-                            custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go
-                            within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <ul id="applianceList">
+                                <!-- <li>Ingredient 1</li>
+                                <li>Ingredient 2</li>
+                                <li>Ingredient 3</li>
+                                <li>Blender</li>
+                                <li>Ingredient 5</li>
+                                <li>Ingredient 6</li>
+                                <li>Ingredient 7</li>
+                                <li>Ingredient 8</li>
+                                <li>very very long Ingredient 9</li>
+                                <li>Ingredient 10</li>
+                                <li>Ingredient 11</li>
+                                <li>Ingredient 12</li>
+                                <li>Ingredient 13</li>
+                                <li>Ingredient 14</li>
+                                <li>Ingredient 15</li>
+                                <li>Ingredient 16</li>
+                                <li>Saladier</li>
+                                <li>Ingredient 18</li>
+                                <li>Ingredient 19</li>
+                                <li>Ingredient 20</li>
+                                <li>Ingredient 21</li>
+                                <li>Ingredient 22</li>
+                                <li>Ingredient 23</li>
+                                <li>Ingredient 24</li>
+                                <li>Ingredient 25</li>
+                                <li>Ingredient 26</li>
+                                <li>Ingredient 27</li>
+                                <li>Ingredient 28</li>
+                                <li>Ingredient 29</li>
+                                <li>Ingredient 30</li> -->
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Ustensiles
-                        </button>
-                    </h2>
+                <div class="accordion-item mt-3 mt-lg-0">
+                    <div class="accordion-header" id="headingThree">
+                        <div class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" role="combobox">
+                            <input id="ustensil-input" class="form-control text-white" type="text"
+                                placeholder="Ustensiles" aria-label="input ustensils">
+                        </div>
+                    </div>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                         data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse
-                            plugin adds the appropriate classes that we use to style each element. These classes control the overall
-                            appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with
-                            custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go
-                            within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            <ul id="ustensilsList">
+                                <!-- <li>Ingredient 1</li>
+                                <li>Ingredient 2</li>
+                                <li>Ingredient 3</li>
+                                <li>Verres</li>
+                                <li>Ingredient 5</li>
+                                <li>Ingredient 6</li>
+                                <li>Ingredient 7</li>
+                                <li>Ingredient 8</li>
+                                <li>very very long Ingredient 9</li>
+                                <li>Ingredient 10</li>
+                                <li>Ingredient 11</li>
+                                <li>Ingredient 12</li>
+                                <li>Ingredient 13</li>
+                                <li>presse citron</li>
+                                <li>Ingredient 15</li>
+                                <li>Ingredient 16</li>
+                                <li>Ingredient 17</li>
+                                <li>Ingredient 18</li>
+                                <li>Ingredient 19</li>
+                                <li>Ingredient 20</li>
+                                <li>Ingredient 21</li>
+                                <li>Ingredient 22</li>
+                                <li>Ingredient 23</li>
+                                <li>Ingredient 24</li>
+                                <li>Ingredient 25</li>
+                                <li>Ingredient 26</li>
+                                <li>Ingredient 27</li>
+                                <li>Ingredient 28</li>
+                                <li>Ingredient 29</li>
+                                <li>Ingredient 30</li> -->
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-        <section id="recipes-zone" class="mt-3 row g-5"></section>
+        </div>
+
+        <!-- Zone d'affichage des recettes -->
+        <section id="recipes-zone" class="mt-3 row g-5" aria-label="liste des recettes"></section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
     <script src="./index.js" type="module"></script>
+    <script src="./scripts/controller/recipeController.js" type="module"></script>
 </body>
 
 </html>
