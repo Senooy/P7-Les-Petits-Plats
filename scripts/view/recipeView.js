@@ -1,19 +1,14 @@
-import { recipesToShow } from '../../index.js'
+import { recipesToShow, ingredientArray, applianceArray, ustensilsArray } from '../../index.js'
 import { ControllerRecipes } from '../controller/recipeController.js'
 
 export class ViewRecipes {
 	constructor(controller) {
 		this.controller = controller
-		this.ingredientlist = []
-		this.applianceList = []
-		this.ustensilsList = []
-		this.ingredientButtonList = document.getElementById('ingredientList')
-		this.applianceButtonList = document.getElementById('applianceList')
-		this.ustensilsButtonList = document.getElementById('ustensilsList')
-
+		// this.controller = new ControllerRecipes()
 		// J'utilise bind pour pouvoir conserver le this de la classe ViewRecipes dans la méthode displayRecipesList
 		this.displayRecipesList = this.displayRecipesList.bind(this)
-
+		this.searchText = ''
+		this.mainInputLength = 0
 		this.recipeSnippet = document.getElementById('recipes-zone')
 		this.searchInput = document.querySelector('#search-zone')
 	}
@@ -21,31 +16,9 @@ export class ViewRecipes {
 	// Méthode pour afficher la liste des recettes à l'utilisateur
 
 	displayRecipesList(recipesToShow) {
-		this.ingredientlist = []
-		this.applianceList = []
-		this.ustensilsList = []
 		this.recipeSnippet.innerHTML = ''
-		this.ingredientButtonList.innerHTML = ''
-		this.applianceButtonList.innerHTML = ''
-		this.ustensilsButtonList.innerHTML = ''
 
 		recipesToShow.forEach((recipe) => {
-			// Je crée un tableau avec les ingrédients, appareils et ustensiles de chaque recette et je supprime les doublons
-			recipe.ingredients.map((ingredient) => {
-				this.ingredientlist.push(`${ingredient.ingredient}`)
-			})
-			this.applianceList.push(`${recipe.appliance}`)
-			recipe.ustensils.map((ustensil) => {
-				this.ustensilsList.push(`${ustensil}`)
-			})
-			// Je supprime les doublons de mes 3 listes grâce à l'opérateur spread et la méthode Set
-			this.ingredientlist = [...new Set(this.ingredientlist)]
-			this.applianceList = [...new Set(this.applianceList)]
-			this.ustensilsList = [...new Set(this.ustensilsList)]
-			console.log('tableau des ingrédients :', this.ingredientlist)
-			console.log('tableau des appareils :', this.applianceList)
-			console.log('tableau des ustensiles :', this.ustensilsList)
-
 			// Je normalise le nom de la recette pour pouvoir l'utiliser dynamiquement comme nom d'image
 			const imageName = recipe.name
 				.toLowerCase()
@@ -90,28 +63,6 @@ export class ViewRecipes {
                 </div>        
         `
 		})
-		this.ingredientButtonList.innerHTML += `
-		${this.ingredientlist
-			.map((ingredient) => {
-				return `<li>${ingredient}</li>`
-			})
-			.join('')}
-		`
-		this.applianceButtonList.innerHTML += `
-		${this.applianceList
-			.map((appliance) => {
-				return `<li>${appliance}</li>`
-			})
-			.join('')}
-		`
-		this.ustensilsButtonList.innerHTML += `
-		${this.ustensilsList
-			.map((ustensil) => {
-				return `<li>${ustensil}</li>`
-			})
-			.join('')}
-		`
-
 		// this.searchInput.addEventListener('input', (event) => {
 
 		// console.log('this search text de view :', this.searchText)
@@ -119,30 +70,13 @@ export class ViewRecipes {
 	}
 
 	// Méthode pour écouter l'input de recherche
-	// listenSearchInput(callback) {
-	// 	this.searchInput.addEventListener('input', (event) => {
-	// 		const searchText = event.target.value
-	// 		callback(searchText)
-	// 	})
-	// 	//return this.searchText
-	// }
-}
-
-export class KeywordsView {
-	constructor(controller) {
-		this.controller = controller
-		this.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+	listenSearchInput(callback) {
+		this.searchInput.addEventListener('input', (event) => {
+			const searchText = event.target.value
+			callback(searchText)
+		})
+		//return this.searchText
 	}
-
-	// Méthode pour écouter les clics sur les mots-clés
-	// listenKeywordsClick(callback) {
-	// 	this.keywordsToClick.forEach((keyword) => {
-	// 		keyword.addEventListener('click', (event) => {
-	// 			const keywordContent = event.target.textContent
-	// 			callback(keywordContent)
-	// 		})
-	// 	})
-	// }
 }
 
 // je crée une classe pour gérer les tags de filtre
@@ -171,5 +105,68 @@ export class FilterTagView {
 		console.log('tag supprimé :', tagContent)
 		// je récupère le contenu du tag pour pouvoir le supprimer du DOM
 		tagToDelete.style.display = 'none'
+	}
+}
+
+export class KeywordsView {
+	constructor(controller) {
+		this.controller = controller
+		this.displayKeywordsList = this.displayKeywordsList.bind(this)
+		this.ingredientlist = []
+		this.applianceList = []
+		this.ustensilsList = []
+		// this.controller.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+		this.ingredientButtonList = document.getElementById('ingredientList')
+		this.applianceButtonList = document.getElementById('applianceList')
+		this.ustensilsButtonList = document.getElementById('ustensilsList')
+	}
+
+	displayKeywordsList(recipesToShow, keywordsToClick) {
+		// const ingredientButtonList = document.getElementById('ingredientList')
+		// const applianceButtonList = document.getElementById('applianceList')
+		// const ustensilsButtonList = document.getElementById('ustensilsList')
+
+		this.ingredientButtonList.innerHTML = ''
+		this.applianceButtonList.innerHTML = ''
+		this.ustensilsButtonList.innerHTML = ''
+
+		recipesToShow.forEach((recipe) => {
+			// Je crée un tableau avec les ingrédients, appareils et ustensiles de chaque recette et je supprime les doublons
+			recipe.ingredients.map((ingredient) => {
+				this.ingredientlist.push(`${ingredient.ingredient}`)
+			})
+			this.applianceList.push(`${recipe.appliance}`)
+			recipe.ustensils.map((ustensil) => {
+				this.ustensilsList.push(`${ustensil}`)
+			})
+
+			// Je supprime les doublons de mes 3 listes grâce à l'opérateur spread et la méthode Set
+			this.ingredientlist = [...new Set(this.ingredientlist)]
+			this.applianceList = [...new Set(this.applianceList)]
+			this.ustensilsList = [...new Set(this.ustensilsList)]
+
+			// Je crée les listes d'ingrédients, appareils et ustensiles correspondants aux recettes affichées
+			this.ingredientButtonList.innerHTML += `
+		${this.ingredientlist
+			.map((ingredient) => {
+				return `<li>${ingredient}</li>`
+			})
+			.join('')}
+		`
+			this.applianceButtonList.innerHTML += `
+		${this.applianceList
+			.map((appliance) => {
+				return `<li>${appliance}</li>`
+			})
+			.join('')}
+		`
+			this.ustensilsButtonList.innerHTML += `
+		${this.ustensilsList
+			.map((ustensil) => {
+				return `<li>${ustensil}</li>`
+			})
+			.join('')}
+		`
+		})
 	}
 }

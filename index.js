@@ -4,9 +4,9 @@ import { ControllerRecipes } from './scripts/controller/recipeController.js'
 
 // je crée un tableau vide pour pouvoir y stocker les recettes filtrées
 let recipesToShow = []
-// let ingredientArray = []
-// let applianceArray = []
-// let ustensilsArray = []
+let ingredientArray = []
+let applianceArray = []
+let ustensilsArray = []
 
 // je crée une instance de ma vue pour pouvoir supprimer les tags de filtrage des recettes
 	// const removeTags = new FilterTagView()
@@ -36,16 +36,14 @@ function init() {
 	// je crée une instance de ma vue pour pouvoir afficher les recettes
 	const recipesDisplay = new ViewRecipes()
 	recipesDisplay.displayRecipesList(recipesToShow)
-	// recipesDisplay.listenSearchInput()
-	// const keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+	recipesDisplay.listenSearchInput()
+	const keywordsToClick = document.querySelectorAll('.accordion-body ul li')
 
 	controller.mainSearch()
-	controller.keywordsSearch()
+	// controller.keywordsSearch()
 
-	// const keywordsDisplay = new KeywordsView(controller)
-	// keywordsDisplay.displayKeywordsList(recipesToShow)
-	// keywordsDisplay.listenKeywordsClick()
-	
+	const keywordsDisplay = new KeywordsView(controller)
+	keywordsDisplay.displayKeywordsList(recipesToShow, keywordsToClick)
 
 	
 
@@ -125,4 +123,4 @@ function checkTagsToRemove() {
 init()
 
 
-export { recipesToShow }
+export { recipesToShow, ingredientArray, applianceArray, ustensilsArray }
