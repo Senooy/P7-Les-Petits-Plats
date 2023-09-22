@@ -1,23 +1,53 @@
 import { Recipes } from '../model/recipeModel.js'
 import { FilterTagView, ViewRecipes, KeywordsView } from '../view/recipeView.js'
+import { Event } from './Event.js'
 
 export class ControllerRecipes {
 	constructor(model) {
 		this.model = model
-		this.filter = new Recipes()
-		this.view = new ViewRecipes()
-		this.tagDisplay = new FilterTagView()
-		this.keywordsDisplay = new KeywordsView()
 		this.searchInput = document.querySelector('#search-zone')
-		// this.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+		this.ingredientSearchInput = document.querySelector('#ingredient-input')
+		this.applianceSearchInput = document.querySelector('#appliance-input')
+		this.ustensilsSearchInput = document.querySelector('#ustensils-input')
 		// Je crée un tableau qui va contenir les tags sélectionnés
 		this.selectedTags = []
+
 		this.ingredientArray = []
 		this.applianceArray = []
 		this.ustensilsArray = []
 		this.mainFilteredRecipes = []
 		this.resetFilteredRecipes = []
 		this.mainInputLength = 0
+
+		// Tableau des différents mots-clés disponibles
+		this.availableIngredientKeywords = document.querySelectorAll('#collapseOne .accordion-body ul li')
+		this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
+		this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
+
+		// Je crée une instance de ma classe Recipes pour pouvoir filtrer les recettes
+		this.filter = new Recipes()
+		// gestion des événements
+		this.event = new Event()
+		this.event.addListener(this.handleIngredientSearch.bind(this))
+		this.event.addListener(this.handleApplianceSearch.bind(this))
+		this.event.addListener(this.handleUstensilsSearch.bind(this))
+
+		this.ingredientSearchInput.addEventListener('input', (event) => {
+			this.event.trigger(event)
+		})
+		this.applianceSearchInput.addEventListener('input', (event) => {
+			this.event.trigger(event)
+		})
+		this.ustensilsSearchInput.addEventListener('input', (event) => {
+			this.event.trigger(event)
+		})
+		// Je crée une instance de ma vue pour pouvoir afficher les recettes
+		this.view = new ViewRecipes()
+		this.tagDisplay = new FilterTagView()
+		this.keywordsDisplay = new KeywordsView()
+
+		// this.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
+
 		// this.view.listenSearchInput((searchText) => {
 		// 	this.searchText = searchText
 		// 	this.mainInputLength = searchText.length
@@ -41,13 +71,57 @@ export class ControllerRecipes {
 				this.view.displayRecipesList(resetFilteredRecipes)
 				// this.keywordsDisplay.displayKeywordsList(resetFilteredRecipes)
 			}
+			this.availableIngredientKeywords = document.querySelectorAll('#collapseOne .accordion-body ul li')
+			this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
+			this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
 			console.log('mainSearch du controleur :', mainFilteredRecipes)
+			console.log('this.availableIngredientKeywords :', this.availableIngredientKeywords)
 		})
 	}
 
+	handleIngredientSearch(event) {
+		this.ingredientSearchText = event.target.value
+		this.ingredientInputLength = this.ingredientSearchText.length
+		// Si la longueur de la recherche est inférieure ou égale à 2, on réinitialise la recherche
+		const ingredientFilteredRecipes = this.filter.ingredientSearch(this.model.recipes, this.ingredientSearchText)
+		const resetFilteredRecipes = this.filter.resetSearch(this.model.recipes)
+		if (this.ingredientInputLength > 3) {
+			this.view.displayRecipesList(ingredientFilteredRecipes)
+		} else if (this.ingredientInputLength <= 2) {
+			this.view.displayRecipesList(resetFilteredRecipes)
+		}
+		console.log('ingredientSearch du controleur :', ingredientFilteredRecipes)
+	}
+
+	handleApplianceSearch(event) {
+		this.applianceSearchText = event.target.value
+		this.applianceInputLength = this.applianceSearchText.length
+		// Si la longueur de la recherche est inférieure ou égale à 2, on réinitialise la recherche
+		const applianceFilteredRecipes = this.filter.applianceSearch(this.model.recipes, this.applianceSearchText)
+		const resetFilteredRecipes = this.filter.resetSearch(this.model.recipes)
+		if (this.applianceInputLength > 3) {
+			this.view.displayRecipesList(applianceFilteredRecipes)
+		} else if (this.applianceInputLength <= 2) {
+			this.view.displayRecipesList(resetFilteredRecipes)
+		}
+		console.log('applianceSearch du controleur :', applianceFilteredRecipes)
+	}
+
+	handleUstensilsSearch(event) {
+		this.ustensilsSearchText = event.target.value
+		this.ustensilsInputLength = this.ustensilsSearchText.length
+		// Si la longueur de la recherche est inférieure ou égale à 2, on réinitialise la recherche
+		const ustensilsFilteredRecipes = this.filter.ustensilsSearch(this.model.recipes, this.ustensilsSearchText)
+		const resetFilteredRecipes = this.filter.resetSearch(this.model.recipes)
+		if (this.ustensilsInputLength > 3) {
+			this.view.displayRecipesList(ustensilsFilteredRecipes)
+		} else if (this.ustensilsInputLength <= 2) {
+			this.view.displayRecipesList(resetFilteredRecipes)
+		}
+		console.log('ustensilsSearch du controleur :', ustensilsFilteredRecipes)
+	}
 	// Méthode qui va récupérer les mots clés cliqués et les envoyer au Modèle pour filtrer les recettes et créeer les tags
-	keywordsSearch(keyword) {
-		console.log('keywordsToClick :', keyword);
+	keywordsSearch() {
 		// this.keywordsToClick.forEach((keyword) => {
 		// 	keyword.addEventListener('click', (event) => {
 		// 		const keywordToSearch = event.target
@@ -85,49 +159,19 @@ export class ControllerRecipes {
 		// 	})
 		// })
 	}
+
+	removeTag(tag) {
+		const index = this.selectedTags.indexOf(tag)
+		if (index > -1) {
+			this.selectedTags.splice(index, 1)
+		}
+	}
+
+	hasSelectedTags() {
+		return this.selectedTags.length > 0
+	}
+
+	resetRecipes() {
+		this.view.displayRecipesList(this.model.recipes)
+	}
 }
-
-// export class FilterTagController {
-// 	constructor(model) {
-// 		this.model = model
-// 		this.filter = new Recipes()
-// 		this.view = new ViewRecipes()
-// 		this.tagDisplay = new FilterTagView()
-// 		this.recipesToShow = this.model.recipes
-// 	}
-
-// 	ingredientSearch(tag, type) {
-// 		const ingredientTagFilteredRecipes = this.filter.ingredientSearch(this.model.recipes, tag)
-// 		console.log('recherche tag ingredient contrôleur :', ingredientTagFilteredRecipes)
-// 		this.recipesToShow = ingredientTagFilteredRecipes
-// 		this.view.displayRecipesList(this.recipesToShow)
-// 	}
-
-// 	applianceSearch(tag, type) {
-// 		const applianceTagFilteredRecipes = this.filter.applianceSearch(this.model.recipes, tag)
-// 		console.log('recherche tag appareil contrôleur :', applianceTagFilteredRecipes)
-// 		// this.tagDisplay.add(tag, type)
-// 		this.view.displayRecipesList(applianceTagFilteredRecipes)
-// 	}
-
-// 	ustensilSearch(tag) {
-// 		const ustensilTagFilteredRecipes = this.filter.ustensilSearch(this.model.recipes, tag)
-// 		console.log('recherche tag ustensile contrôleur :', ustensilTagFilteredRecipes)
-// 		// this.tagDisplay.add(tag, type)
-// 		this.view.displayRecipesList(ustensilTagFilteredRecipes)
-// 	}
-
-// 	// Méthode pour supprimer un tag de filtre
-// 	// remove(tag) {
-// 	// 	tag.style.display = 'none'
-
-// 	// 	console.log('ingredientArray depuis Controller :', ingredientArray)
-// 	// }
-
-// 	reset() {
-// 		const resetTagFilteredRecipes = this.tagDisplay.resetSearch(this.model.recipes)
-// 		console.log('resetTagFilteredRecipes resetTags du controleur :', resetTagFilteredRecipes)
-// 		// On envoie les recettes filtrées dans la vue pour qu'elle les affiche à l'utilisateur
-// 		this.view.displayRecipesList(resetTagFilteredRecipes)
-// 	}
-// }

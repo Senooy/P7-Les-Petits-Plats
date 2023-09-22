@@ -13,7 +13,7 @@ Vous devez développer l'intégralité du visuel de l'application ainsi que les 
 
 ## Author
 
-- Laurent TRINCO
+- Younes KHELIFI
 
 ## Technos
 
