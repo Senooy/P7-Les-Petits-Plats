@@ -23,7 +23,7 @@ export class ViewRecipes {
 		this.ingredientButtonList.innerHTML = ''
 		this.applianceButtonList.innerHTML = ''
 		this.ustensilsButtonList.innerHTML = ''
-		console.log(ingredientList)
+
 		recipesToShow.forEach((recipe) => {
 			// Je crée un tableau avec les ingrédients, appareils et ustensiles de chaque recette et je supprime les doublons
 
@@ -94,10 +94,9 @@ export class ViewRecipes {
 			})
 			.join('')}
 		`
-
-		console.log('ingredient list :', this.ingredientlist)
 	}
 
+	// Méthode pour filtrer les recettes par ingrédient
 	filterIngredients(search) {
 		for (let ingredientElement of this.ingredientButtonList.children) {
 			ingredientElement.style.display = 'block'
@@ -106,6 +105,27 @@ export class ViewRecipes {
 			}
 		}
 	}
+
+	// Méthode pour filtrer les recettes par appareil
+	filterAppliances(search) {
+		for (let applianceElement of this.applianceButtonList.children) {
+			applianceElement.style.display = 'block'
+			if (!applianceElement.textContent.toLowerCase().includes(search)) {
+				applianceElement.style.display = 'none'
+			}
+		}
+	}
+
+	// Méthode pour filtrer les recettes par ustensile
+	filterUstensils(search) {
+		for (let ustensilElement of this.ustensilsButtonList.children) {
+			ustensilElement.style.display = 'block'
+			if (!ustensilElement.textContent.toLowerCase().includes(search)) {
+				ustensilElement.style.display = 'none'
+			}
+		}
+	}	
+	
 
 	// Méthode pour écouter l'input de recherche
 	// listenSearchInput(callback) {
