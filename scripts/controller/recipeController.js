@@ -11,6 +11,7 @@ export class ControllerRecipes {
 		this.ustensilsSearchInput = document.querySelector('#ustensils-input')
 		// Je crée un tableau qui va contenir les tags sélectionnés
 		this.selectedTags = []
+		this.tagToDisplay = ''
 
 		this.ingredientArray = []
 		this.applianceArray = []
@@ -28,6 +29,8 @@ export class ControllerRecipes {
 		this.filter = new Recipes()
 		// gestion des événements
 		this.event = new Event()
+
+		// Je crée et j'écoute les événements liés aux recherches par ingrédient, appareil et ustensile
 		this.event.addListener(this.handleIngredientSearch.bind(this))
 		this.event.addListener(this.handleApplianceSearch.bind(this))
 		this.event.addListener(this.handleUstensilsSearch.bind(this))
@@ -41,18 +44,14 @@ export class ControllerRecipes {
 		this.ustensilsSearchInput.addEventListener('input', (event) => {
 			this.event.trigger(event)
 		})
+
 		// Je crée une instance de ma vue pour pouvoir afficher les recettes
 		this.view = new ViewRecipes()
+		// Je crée une instance de ma classe FilterTagView pour pouvoir afficher les tags de filtre
 		this.tagDisplay = new FilterTagView()
-		this.keywordsDisplay = new KeywordsView()
+		// this.keywordsDisplay = new KeywordsView()
 
 		// this.keywordsToClick = document.querySelectorAll('.accordion-body ul li')
-
-		// this.view.listenSearchInput((searchText) => {
-		// 	this.searchText = searchText
-		// 	this.mainInputLength = searchText.length
-		// })
-		// this.recipesToShow = this.model.recipes
 	}
 
 	// On envoie le texte saisi dans la barre de recherche dans le controleur qui va filtrer les recettes dans le Modèle
@@ -87,23 +86,80 @@ export class ControllerRecipes {
 				this.handleTagSelected()
 				// this.keywordsDisplay.displayKeywordsList(resetFilteredRecipes)
 			}
-			this.availableIngredientKeywords = document.querySelectorAll('#collapseOne .accordion-body ul li')
-			this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
-			this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
-			console.log('mainSearch du controleur :', mainFilteredRecipes)
-			console.log('this.availableIngredientKeywords :', this.availableIngredientKeywords)
+			// this.availableIngredientKeywords = document.querySelectorAll('#collapseOne .accordion-body ul li')
+			// this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
+			// this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
+			// console.log('mainSearch du controleur :', mainFilteredRecipes)
+			// console.log('this.availableIngredientKeywords :', this.availableIngredientKeywords)
 		})
 	}
 
+	// Méthode d'écoute des tags sélectionnés dans les listes déroulantes
 	handleTagSelected() {
-		const ingredientTags = document.querySelectorAll('#ingredientList li')
-		for (let tag of ingredientTags) {
+		const listOfAllTags = document.querySelectorAll('.accordion-body ul li')
+		for (let tag of listOfAllTags) {
 			tag.addEventListener('click', () => {
-				this.model.addTag('ingredients', tag.textContent)
+				const keywordArray = tag.closest('ul').id.replace('List', '')
+				const tagToDisplay = tag.textContent
+
+				this.model.addTag(keywordArray, tagToDisplay)
+				this.selectedTags = this.model.getSelectedTags()
+				// this.ingredientArray = [...this.selectedTags.ingredients]
+
+				console.log('this.model.tags :', this.selectedTags)
+				console.log('tableau du tag :', keywordArray)
+				console.log('tag choisi :', tagToDisplay)
+				// for (let tag of this.ingredientArray) {
+				// 	// console.log('tag :', tag)
+				this.tagDisplay.add(keywordArray, tagToDisplay)
+				// }
 			})
 		}
+		// const ingredientTags = document.querySelectorAll('#ingredientList li')
+		// for (let tag of ingredientTags) {
+		// 	tag.addEventListener('click', () => {
+		// 		const keywordArray = tag.closest('ul').id.replace('List', '')
+		// 		const tagToDisplay = tag.textContent
+
+		// 		this.model.addTag('ingredients', tag.textContent)
+		// 		this.selectedTags = this.model.getSelectedTags()
+		// 		this.ingredientArray = [...this.selectedTags.ingredients]
+				
+		// 		console.log('this.model.tags :', this.selectedTags)
+		// 		console.log('tableau du tag :', keywordArray);
+		// 		console.log('tag choisi :', tagToDisplay);
+		// 		// for (let tag of this.ingredientArray) {
+		// 		// 	// console.log('tag :', tag)
+		// 		// 	this.tagDisplay.add('ingredient', tag)
+		// 		// }
+				
+		// 	})
+		// }
+		// const applianceTags = document.querySelectorAll('#applianceList li')
+		// for (let tag of applianceTags) {
+		// 	tag.addEventListener('click', () => {
+		// 		this.model.addTag('appliances', tag.textContent)
+		// 	})
+		// }
+		// const ustensilsTags = document.querySelectorAll('#ustensilsList li')
+		// for (let tag of ustensilsTags) {
+		// 	tag.addEventListener('click', () => {
+		// 		this.model.addTag('ustensils', tag.textContent)
+		// 	})
+		// }
+
+		//////////////////////////////
+
+
+		// this.selectedTags = this.model.getSelectedTags()
+		// this.tagToDisplay = this.selectedTags.ingredients.values().next().value
+		// this.tagToDisplay = Array.from(this.selectedTags)
+		// console.log('this.model.tags :', this.selectedTags)
+		// console.log('tag à afficher :', this.tagToDisplay)
+		// this.tagDisplay.add('ingredients', this.model.getTags('ingredients'))
 		// faut demander le display des tags a la view
 	}
+
 	handleTagUnSelected() {}
 
 	// Code des méthodes de recherche par mots-clés //
@@ -145,7 +201,6 @@ export class ControllerRecipes {
 		// console.log('ustensilsSearch du controleur :', ustensilsFilteredRecipes)
 	}
 
-	
 	// Méthode qui va récupérer les mots clés cliqués et les envoyer au Modèle pour filtrer les recettes et créeer les tags
 	keywordsSearch() {
 		// this.keywordsToClick.forEach((keyword) => {

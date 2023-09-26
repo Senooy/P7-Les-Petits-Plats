@@ -5,8 +5,8 @@ export class ViewRecipes {
 	constructor(controller) {
 		this.controller = controller
 
-		this.ingredientButtonList = document.getElementById('ingredientList')
-		this.applianceButtonList = document.getElementById('applianceList')
+		this.ingredientButtonList = document.getElementById('ingredientsList')
+		this.applianceButtonList = document.getElementById('appliancesList')
 		this.ustensilsButtonList = document.getElementById('ustensilsList')
 
 		// J'utilise bind pour pouvoir conserver le this de la classe ViewRecipes dans la méthode displayRecipesList
@@ -125,7 +125,7 @@ export class ViewRecipes {
 			}
 		}
 	}	
-	
+
 
 	// Méthode pour écouter l'input de recherche
 	// listenSearchInput(callback) {
@@ -163,7 +163,7 @@ export class FilterTagView {
 	}
 
 	// Méthode pour ajouter un tag de filtre
-	add(tag, type) {
+	add(type, tag) {
 		const filterTagSnippet = document.getElementById('tags-zone')
 
 		filterTagSnippet.innerHTML += `
