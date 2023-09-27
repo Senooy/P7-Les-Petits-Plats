@@ -72,6 +72,7 @@ export class ViewRecipes {
         `
 			})
 		}
+		console.log('liste des recettes affichée :', recipesToShow);
 	}
 
 	displayButtonLists(ingredientList = [], applianceList = [], ustensilList = []) {
@@ -171,7 +172,6 @@ export class FilterTagView {
 	remove(event) {
 		const tagToDelete = event.target.closest('.tag')
 		const tagContent = tagToDelete.textContent
-		console.log('tag supprimé :', tagContent)
 		// je récupère le contenu du tag pour pouvoir le supprimer du DOM
 		tagToDelete.style.display = 'none'
 	}

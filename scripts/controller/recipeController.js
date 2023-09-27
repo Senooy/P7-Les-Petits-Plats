@@ -181,24 +181,13 @@ export class ControllerRecipes {
 				this.tagToDisplay = tag.textContent
 				// je vérifie si le tag sélectionné est déjà affiché
 				const isInTags = this.selectedTags.some((tag) => tag.value === this.tagToDisplay)
-				// On ajoute le tag sélectionné au tableau créé dans le modèle s'il n'est pas déjà présent 
+				// On ajoute le tag sélectionné au tableau créé dans le modèle s'il n'est pas déjà présent
 				if (!isInTags) {
-				this.model.addTag(keywordArray, this.tagToDisplay)
-				this.tagView.add(keywordArray, this.tagToDisplay)
+					this.model.addTag(keywordArray, this.tagToDisplay)
+					this.tagView.add(keywordArray, this.tagToDisplay)
 				}
-				console.log('liste des tags avant suppression :', this.selectedTags)
-				// On supprime les tags qui sont déjà affichés
-				// for (let tag of listOfAllTags) {
-				// 	if (tag.textContent == this.tagToDisplay) {
-				// 		tag.remove()
-				// 	}
-				// }
-				// console.log('liste des tags après suppression :', this.selectedTags)
-
-				// On affiche les tags sélectionnés dans la Vue si ils ne sont pas déjà affichés
-				// if (this.selectedTags.length != 0) {
-				// 	this.tagView.add(keywordArray, this.tagToDisplay)
-				// }
+				console.log('get selected tags du modele apres ajout : ', this.model.getSelectedTags())
+				// this.selectedTags = this.model.getSelectedTags()
 
 				// On affiche les recettes filtrées par les tags sélectionnés
 				if (this.model.getRecipesFilteredBySearchAndTags(this.tagToDisplay, keywordArray)) {
@@ -210,18 +199,22 @@ export class ControllerRecipes {
 					)
 					this.handleToggleButtons()
 					this.handleTagSelected()
-					this.handleTagUnSelected()
 				} else {
 					this.view.displayNoRecipeMessage()
 				}
 			})
 		}
+		this.handleTagUnSelected()
 	}
 
 	// Méthode d'écoute des tags supprimés
 
 	handleTagUnSelected() {
+		this.selectedTags = this.model.getSelectedTags()
 		const tagCloseBtn = document.querySelectorAll('.tag-close')
+		let resetFilteredRecipes = this.model.getRecipesFilteredBySearch()
+		// resetFilteredRecipes = this.model.resetRecipes()
+		
 		tagCloseBtn.forEach((tag) => {
 			tag.addEventListener('click', (event) => {
 				// On récupère le type du tag à supprimer
@@ -231,17 +224,50 @@ export class ControllerRecipes {
 				const tagType = button.getAttribute('data-type')
 				// On supprime le tag de la liste des tags sélectionnés dans la Vue
 				this.tagView.remove(event)
+				// On récupère le tag à supprimer
 				const tagToDelete = event.target.closest('.tag')
-				const tagContent = tagToDelete.textContent.toString()
-				console.log('tag supprimé :', tagContent)
-				// je cherche le type du tag supprimé pour pouvoir le passer en paramètre à la méthode removeTag de la classe Recipes
-				console.log('type du tag supprimé :', tagType)
-				this.model.removeTag(tagType, tagContent)
-				// tagToDelete.style.display = 'none'
-				// this.removeTag(tagContent)
-				console.log('list des tags après suppression :', this.selectedTags)
-				// je récupère le contenu du tag pour pouvoir le passer en paramètre à la méthode remove de la classe FilterTagView
-				// removeTags.remove(event)
+				const tagContent = tagToDelete.textContent.split('\n')[0].trim()
+				// On supprime le tag de la liste des tags sélectionnés dans le Modèle
+				this.model.removeTag(this.selectedTags, tagType, tagContent)
+				this.selectedTags = this.model.getSelectedTags()
+				console.log('get selected tags du modele apres suppression : ', this.selectedTags)
+				// if (this.model.getRecipesFilteredBySearchAndTags(tagContent, tagType)) {
+				// on affiche les recettes mises à jour après suppression du tag
+				this.selectedTags.forEach((tag) => {
+					// console.log('tag.value : ', tag.value)
+					// console.log('tag.type : ', tag.type)
+					if (this.selectedTags.length !== 0) {
+						console.log('this.model.getRecipesFilteredBySearchAndTags(tag.value, tag.type) : ', this.model.getRecipesFilteredBySearchAndTags(tag.value, tag.type));
+						// this.view.displayRecipesList(this.model.getRecipesFilteredBySearchAndTags(tag.value, tag.type))
+						// this.view.displayButtonLists(
+						// 	this.model.getIngredientList(),
+						// 	this.model.getApplianceList(),
+						// 	this.model.getUstensilList()
+						// )
+						// this.handleToggleButtons()
+						// this.handleTagSelected()
+					} else {
+						console.log('resetFilteredRecipes : ', resetFilteredRecipes);
+						// this.view.displayRecipesList(resetFilteredRecipes)
+						// this.view.displayButtonLists(
+						// 	this.model.getIngredientList(),
+						// 	this.model.getApplianceList(),
+						// 	this.model.getUstensilList()
+						// )
+						// this.handleToggleButtons()
+						// this.handleTagSelected()
+					}
+				})
+			
+
+
+
+
+
+
+				// this.view.displayRecipesList(this.model.getRecipesFilteredBySearchAndTags(tagContent, tagType))
+				
+				// }
 			})
 		})
 	}

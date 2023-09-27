@@ -5,11 +5,6 @@ export class Recipes {
 
 		// Je crée un tableau qui va contenir les tags sélectionnés par l'utilisateur
 		this.selectedTags = []
-		// this.selectedTags = {
-		// 	ingredients: new Set(),
-		// 	appliances: new Set(),
-		// 	ustensils: new Set(),
-		// }
 
 		this.addTag = this.addTag.bind(this)
 		this.removeTag = this.removeTag.bind(this)
@@ -69,25 +64,17 @@ export class Recipes {
 
 	// Méthode pour ajouter un tag dans le tableau des tags sélectionnés
 	addTag(type, value) {
-		// const isInTags = this.selectedTags.some((tag) => tag.value === value)
-		// console.log('isInTags :', isInTags);
-		// J'ajoute le tag dans le tableau des tags sélectionnés en utilisant la méthode add de l'objet Set
-		// if (!isInTags) {
-			this.selectedTags.push({ type: type, value: value })
-		// }
-		console.log('this tags:', this.selectedTags)
-		// console.log(this.selectedTags)
+		// J'ajoute le tag dans le tableau des tags sélectionnés
+		this.selectedTags.push({ type: type, value: value })
 	}
 
 	// Méthode pour supprimer un tag du tableau des tags sélectionnés
-	removeTag(type, value) {
-		console.log('value to delete', value)
-		console.log('type to delete', type);
-		console.log('before delete', this.selectedTags)
-		// Je supprime le tag du tableau des tags sélectionnés en utilisant la méthode delete de l'objet Set
-		// this.selectedTags[type].delete.apply(value)
-		console.log('after delete', this.selectedTags)
-		// this.updateRecipes()
+	removeTag(arrayToFilter, type, value) {
+		// Je supprime le tag du tableau des tags sélectionnés en utilisant la méthode findIndex pour récupérer l'index du tag à supprimer
+		let deletedTagIndex = arrayToFilter.findIndex((tag) => tag.value === value && tag.type === type)
+		// puis la méthode splice pour supprimer le tag à l'index récupéré
+		arrayToFilter.splice(deletedTagIndex, 1)
+		this.selectedTags = arrayToFilter
 	}
 
 	getSelectedTags() {
