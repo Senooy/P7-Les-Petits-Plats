@@ -10,7 +10,7 @@ export class ControllerRecipes {
 		this.applianceSearchInput = document.querySelector('#appliance-input')
 		this.ustensilsSearchInput = document.querySelector('#ustensils-input')
 		// Je crée un tableau qui va contenir les tags sélectionnés
-		this.selectedTags = []
+		this.selectedTags = this.model.getSelectedTags()
 		this.tagToDisplay = ''
 
 		this.ingredientArray = []
@@ -19,11 +19,6 @@ export class ControllerRecipes {
 		this.mainFilteredRecipes = []
 		this.resetFilteredRecipes = []
 		this.mainInputLength = 0
-
-		// Tableau des différents mots-clés disponibles
-		this.availableIngredientKeywords = document.querySelectorAll('#collapseOne .accordion-body ul li')
-		this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
-		this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
 
 		// gestion des événements
 		this.event = new Event()
@@ -59,7 +54,7 @@ export class ControllerRecipes {
 			// On crée une variable qui va contenir les recettes filtrées par la recherche
 			const mainFilteredRecipes = this.model.getRecipesFilteredBySearch()
 			let resetFilteredRecipes = this.model.getRecipesFilteredBySearch()
-			console.log('resetFilteredRecipes :', resetFilteredRecipes)
+			console.log('availableIngredientKeywords', this.availableIngredientKeywords)
 			// Si la longueur de la recherche est supérieure à 3, on affiche les recettes filtrées
 			if (this.mainInputLength > 3) {
 				if (mainFilteredRecipes.length != 0) {
@@ -107,7 +102,8 @@ export class ControllerRecipes {
 	}
 
 	// Méthode d'écoute des tags sélectionnés dans les listes déroulantes
-	handleTagSelected() {
+
+	handleToggleButtons() {
 		// On récupère tous les boutons de la liste déroulante
 		const inputButtons = document.querySelectorAll('.filter_button input')
 		const collapseElements = document.querySelectorAll('.accordion-collapse')
@@ -120,14 +116,23 @@ export class ControllerRecipes {
 				switch (inputButton.id) {
 					case 'ingredient-input':
 						inputButton.placeholder = 'Rechercher un ingrédient'
+						if (inputButton.classList.contains('opacity-100')) {
+							inputButton.classList.remove('opacity-100')
+						}
 						inputButton.classList.add('opacity-50')
 						break
 					case 'appliance-input':
 						inputButton.placeholder = 'Rechercher un appareil'
+						if (inputButton.classList.contains('opacity-100')) {
+							inputButton.classList.remove('opacity-100')
+						}
 						inputButton.classList.add('opacity-50')
 						break
 					case 'ustensils-input':
 						inputButton.placeholder = 'Rechercher un ustensile'
+						if (inputButton.classList.contains('opacity-100')) {
+							inputButton.classList.remove('opacity-100')
+						}
 						inputButton.classList.add('opacity-50')
 						break
 				}
@@ -138,20 +143,32 @@ export class ControllerRecipes {
 				switch (inputButton.id) {
 					case 'ingredient-input':
 						inputButton.placeholder = 'Ingredients'
+						if (inputButton.classList.contains('opacity-50')) {
+							inputButton.classList.remove('opacity-50')
+						}
 						inputButton.classList.add('opacity-100')
 						break
 					case 'appliance-input':
 						inputButton.placeholder = 'Appareils'
+						if (inputButton.classList.contains('opacity-50')) {
+							inputButton.classList.remove('opacity-50')
+						}
 						inputButton.classList.add('opacity-100')
 						break
 					case 'ustensils-input':
 						inputButton.placeholder = 'Ustensiles'
+						if (inputButton.classList.contains('opacity-50')) {
+							inputButton.classList.remove('opacity-50')
+						}
 						inputButton.classList.add('opacity-100')
 						break
 				}
 			})
 		}
+	}
 
+	handleTagSelected() {
+		this.handleToggleButtons()
 		const listOfAllTags = document.querySelectorAll('.accordion-body ul li')
 		for (let tag of listOfAllTags) {
 			tag.addEventListener('click', () => {
@@ -166,7 +183,7 @@ export class ControllerRecipes {
 				}
 
 				this.model.addTag(keywordArray, this.tagToDisplay)
-				this.selectedTags = this.model.getSelectedTags()
+				// this.selectedTags = this.model.getSelectedTags()
 				console.log('liste des tags avant suppression :', this.selectedTags)
 				// On supprime les tags qui sont déjà affichés
 				for (let tag of listOfAllTags) {
@@ -189,6 +206,7 @@ export class ControllerRecipes {
 						this.model.getApplianceList(),
 						this.model.getUstensilList()
 					)
+					this.handleToggleButtons()
 					this.handleTagSelected()
 					this.handleTagUnSelected()
 				} else {
