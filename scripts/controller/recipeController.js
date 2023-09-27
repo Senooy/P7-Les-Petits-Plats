@@ -178,30 +178,27 @@ export class ControllerRecipes {
 		for (let tag of listOfAllTags) {
 			tag.addEventListener('click', () => {
 				const keywordArray = tag.closest('ul').id.replace('List', '')
-
 				this.tagToDisplay = tag.textContent
-				// Je récupère l'élément parent de l'élément cliqué et je referme le collapse du bouton
-				// let collapseElement = tag.closest('.accordion-collapse')
-				// let collapseInstance = bootstrap.Collapse.getInstance(collapseElement)
-				// if (collapseInstance) {
-				// 	collapseInstance.hide()
-				// }
-
+				// je vérifie si le tag sélectionné est déjà affiché
+				const isInTags = this.selectedTags.some((tag) => tag.value === this.tagToDisplay)
+				// On ajoute le tag sélectionné au tableau créé dans le modèle s'il n'est pas déjà présent 
+				if (!isInTags) {
 				this.model.addTag(keywordArray, this.tagToDisplay)
-				// this.selectedTags = this.model.getSelectedTags()
+				this.tagView.add(keywordArray, this.tagToDisplay)
+				}
 				console.log('liste des tags avant suppression :', this.selectedTags)
 				// On supprime les tags qui sont déjà affichés
-				for (let tag of listOfAllTags) {
-					if (tag.textContent == this.tagToDisplay) {
-						tag.remove()
-					}
-				}
-				console.log('liste des tags après suppression :', this.selectedTags)
+				// for (let tag of listOfAllTags) {
+				// 	if (tag.textContent == this.tagToDisplay) {
+				// 		tag.remove()
+				// 	}
+				// }
+				// console.log('liste des tags après suppression :', this.selectedTags)
 
 				// On affiche les tags sélectionnés dans la Vue si ils ne sont pas déjà affichés
-				if (this.selectedTags.length != 0) {
-					this.tagView.add(keywordArray, this.tagToDisplay)
-				}
+				// if (this.selectedTags.length != 0) {
+				// 	this.tagView.add(keywordArray, this.tagToDisplay)
+				// }
 
 				// On affiche les recettes filtrées par les tags sélectionnés
 				if (this.model.getRecipesFilteredBySearchAndTags(this.tagToDisplay, keywordArray)) {
@@ -235,7 +232,7 @@ export class ControllerRecipes {
 				// On supprime le tag de la liste des tags sélectionnés dans la Vue
 				this.tagView.remove(event)
 				const tagToDelete = event.target.closest('.tag')
-				const tagContent = tagToDelete.textContent
+				const tagContent = tagToDelete.textContent.toString()
 				console.log('tag supprimé :', tagContent)
 				// je cherche le type du tag supprimé pour pouvoir le passer en paramètre à la méthode removeTag de la classe Recipes
 				console.log('type du tag supprimé :', tagType)
