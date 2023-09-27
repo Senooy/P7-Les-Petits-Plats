@@ -25,8 +25,8 @@ export class ControllerRecipes {
 		this.availableApplianceKeywords = document.querySelectorAll('#collapseTwo .accordion-body ul li')
 		this.availableUstensilsKeywords = document.querySelectorAll('#collapseThree .accordion-body ul li')
 
-		// Je crée une instance de ma classe Recipes pour pouvoir filtrer les recettes
-		this.filter = new Recipes()
+		// // Je crée une instance de ma classe Recipes pour pouvoir filtrer les recettes
+		// this.filter = new Recipes()
 		// gestion des événements
 		this.event = new Event()
 
@@ -63,8 +63,8 @@ export class ControllerRecipes {
 			this.model.mainSearch = this.searchText
 			// On crée une variable qui va contenir les recettes filtrées par la recherche
 			const mainFilteredRecipes = this.model.getRecipesFilteredBySearch()
-			const resetFilteredRecipes = this.model.getRecipesFilteredBySearch()
-
+			let resetFilteredRecipes = this.model.getRecipesFilteredBySearch()
+			console.log('resetFilteredRecipes :', resetFilteredRecipes)
 			// Si la longueur de la recherche est supérieure à 3, on affiche les recettes filtrées
 			if (this.mainInputLength > 3) {
 				if (mainFilteredRecipes.length != 0) {
@@ -81,7 +81,11 @@ export class ControllerRecipes {
 				// this.keywordsDisplay.displayKeywordsList(mainFilteredRecipes)
 
 				// Sinon, on affiche toutes les recettes
-			} else if (this.mainInputLength <= 2) {
+			}
+			if (this.mainInputLength <= 2 || this.mainInputLength == 0) {
+				// this.model.resetFilteredRecipes()
+				console.log('this.model avant resetFilteredRecipes :', this.model);
+				resetFilteredRecipes = this.model.resetRecipes()
 				this.view.displayRecipesList(resetFilteredRecipes)
 				this.view.displayButtonLists(
 					this.model.getIngredientList(),
@@ -98,6 +102,21 @@ export class ControllerRecipes {
 			// console.log('mainSearch du controleur :', mainFilteredRecipes)
 			// console.log('this.availableIngredientKeywords :', this.availableIngredientKeywords)
 		})
+	}
+
+	getBaseIngredients() {
+		this.ingredientArray = this.model.getFirstIngredientList()
+		return this.ingredientArray
+	}
+
+	getBaseAppliances() {
+		this.applianceArray = this.model.getFirstApplianceList()
+		return this.applianceArray
+	}
+
+	getBaseUstensils() {
+		this.ustensilsArray = this.model.getFirstUstensilList()
+		return this.ustensilsArray
 	}
 
 	// Méthode d'écoute des tags sélectionnés dans les listes déroulantes
