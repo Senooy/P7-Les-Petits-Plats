@@ -15,62 +15,51 @@ export class Recipes {
 		this.filteredRecipes = []
 	}
 
+	// Méthode de suppression des accents //
+	removeAccents(str) {
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+	}
+
 	// Code des méthodes d'envoi des données liées aux mots-clés à afficher //
+
 	getIngredientList() {
-		console.log('liste recettes utilisée pour filtrer :', this.filteredRecipes)
-		// Je crée un tableau d'ingrédients à partir du tableau de recettes en utilisant la méthode reduce pour applatir les ingrédients de chaque recette dans un seul tableau
-		// const ingredients = this.getRecipesFilteredBySearchAndTags().reduce((acc, cur) => {
-		const ingredients = this.getRecipesFilteredBySearch().reduce((acc, cur) => {
-			const array = [...acc, ...cur.ingredients.map((ingredient) => ingredient.ingredient)]
-			return array
-		}, [])
+		// Je crée une liste d'ingrédients en utilisant la méthode map pour récupérer les ingrédients de chaque recette et flat pour applatir le tableau
+		const ingredients = this.getRecipesFilteredBySearch()
+			.map((recipe) => recipe.ingredients.map((ingredient) => ingredient.ingredient))
+			.flat()
 		// Je crée un nouveau tableau à partir du tableau d'ingrédients en utilisant la méthode Set pour supprimer les doublons
 		return Array.from(new Set(ingredients))
 	}
 
 	getApplianceList() {
 		// Je crée un tableau d'appareils à partir du tableau de recettes en utilisant la méthode map pour récupérer l'appareil de chaque recette
-		// const appliances = this.getRecipesFilteredBySearchAndTags().map((recipe) => recipe.appliance)
 		const appliances = this.getRecipesFilteredBySearch().map((recipe) => recipe.appliance)
-		// Je crée un nouveau tableau à partir du tableau d'appareils en utilisant la méthode Set pour supprimer les doublons
 		return Array.from(new Set(appliances))
 	}
 
 	getUstensilList() {
-		// Je crée un tableau d'ustensiles à partir du tableau de recettes en utilisant la méthode reduce pour applatir les ustensiles de chaque recette dans un seul tableau
-		// const ustensils = this.getRecipesFilteredBySearchAndTags().reduce((acc, cur) => {
-		const ustensils = this.getRecipesFilteredBySearch().reduce((acc, cur) => {
-			const array = [...acc, ...cur.ustensils]
-			return array
-		}, [])
-		// Je crée un nouveau tableau à partir du tableau d'ustensiles en utilisant la méthode Set pour supprimer les doublons
+		// Je crée une liste d'ustensiles en utilisant la méthode map pour récupérer les ustensiles de chaque recette et flat pour applatir le tableau
+		const ustensils = this.getRecipesFilteredBySearch()
+			.map((recipe) => recipe.ustensils)
+			.flat()
 		return Array.from(new Set(ustensils))
 	}
 
 	getFirstIngredientList() {
-		// Je crée un tableau d'ingrédients à partir du tableau de recettes en utilisant la méthode reduce pour applatir les ingrédients de chaque recette dans un seul tableau
-		const ingredients = this.recipeList.reduce((acc, cur) => {
-			const array = [...acc, ...cur.ingredients.map((ingredient) => ingredient.ingredient)]
-			return array
-		}, [])
-		// Je crée un nouveau tableau à partir du tableau d'ingrédients en utilisant la méthode Set pour supprimer les doublons
+		const ingredients = this.recipeList
+			.map((recipe) => recipe.ingredients.map((ingredient) => ingredient.ingredient))
+			.flat()
 		return Array.from(new Set(ingredients))
 	}
 
 	getFirstApplianceList() {
 		// Je crée un tableau d'appareils à partir du tableau de recettes en utilisant la méthode map pour récupérer l'appareil de chaque recette
 		const appliances = this.recipeList.map((recipe) => recipe.appliance)
-		// Je crée un nouveau tableau à partir du tableau d'appareils en utilisant la méthode Set pour supprimer les doublons
 		return Array.from(new Set(appliances))
 	}
 
 	getFirstUstensilList() {
-		// Je crée un tableau d'ustensiles à partir du tableau de recettes en utilisant la méthode reduce pour applatir les ustensiles de chaque recette dans un seul tableau
-		const ustensils = this.recipeList.reduce((acc, cur) => {
-			const array = [...acc, ...cur.ustensils]
-			return array
-		}, [])
-		// Je crée un nouveau tableau à partir du tableau d'ustensiles en utilisant la méthode Set pour supprimer les doublons
+		const ustensils = this.recipeList.map((recipe) => recipe.ustensils).flat()
 		return Array.from(new Set(ustensils))
 	}
 
@@ -90,62 +79,36 @@ export class Recipes {
 		this.filteredRecipes = this.filteredRecipes.length ? this.filteredRecipes : this.recipeList
 		this.filteredRecipes = this.filteredRecipes.filter(
 			(recipe) =>
-				recipe.name.toLowerCase().includes(this.mainSearch.toLowerCase()) ||
+				this.removeAccents(recipe.name.toLowerCase()).includes(this.removeAccents(this.mainSearch.toLowerCase())) ||
 				recipe.ingredients.some((ingredient) =>
-					ingredient.ingredient.toLowerCase().includes(this.mainSearch.toLowerCase())
+					this.removeAccents(ingredient.ingredient.toLowerCase()).includes(
+						this.removeAccents(this.mainSearch.toLowerCase())
+					)
 				) ||
-				recipe.description.toLowerCase().includes(this.mainSearch.toLowerCase())
+				this.removeAccents(recipe.description.toLowerCase()).includes(this.removeAccents(this.mainSearch.toLowerCase()))
 		)
 		return this.filteredRecipes
 	}
-	// getRecipesFilteredBySearchAndTags(tag) {
-	// 	// if (tag) {
-	// 	// 	return this.getRecipesFilteredBySearch().filter((recipe) =>
-	// 	// 		recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === tag.toLowerCase())
-	// 	// 	)
-	// 	// }
-	// 	console.log('tag passé au modele :', tag);
-	// 	// test avec condition si le tag appartient à la liste ingredients, appliances ou ustensils
-	// 	// if (this.selectedTags.ingredients.size > 0) {
-	// 	if (tag) {
-	// 		return this.getRecipesFilteredBySearch().filter((recipe) =>
-	// 			recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === tag.toLowerCase())
-	// 		)
-	// 	} else if (this.selectedTags.appliances.size > 0) {
-	// 		return this.getRecipesFilteredBySearch().filter((recipe) => recipe.appliance.toLowerCase() === tag.toLowerCase())
-	// 	} else if (this.selectedTags.ustensils.size > 0) {
-	// 		return this.getRecipesFilteredBySearch().filter((recipe) =>
-	// 			recipe.ustensils.some((ustensil) => ustensil.toLowerCase() === tag.toLowerCase())
-	// 		)
-	// 	} else {
-	// 		return this.getRecipesFilteredBySearch()
-	// 	}
-	// }
+
 	getRecipesFilteredBySearchAndTags(tag, type) {
-		console.log('lancement de la méthode getRecipesFilteredBySearchAndTags')
-		// console.log('liste recettes utilisée pour filtrer :', this.filteredRecipes)
-		// if (tag) {
-		// 	return this.getRecipesFilteredBySearch().filter((recipe) =>
-		// 		recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === tag.toLowerCase())
-		// 	)
-		// }
-		// test avec condition si le tag appartient à la liste ingredients, appliances ou ustensils
-		// if (this.selectedTags.ingredients.size > 0) {
 		if (tag && type === 'ingredients') {
-			console.log('nbre de recettes dispos au clic sur un ingrédient :', this.filteredRecipes.length)
-			// this.filteredRecipes = this.getRecipesFilteredBySearch().filter((recipe) =>
 			this.filteredRecipes = this.getRecipesFilteredBySearch().filter((recipe) =>
-				recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === tag.toLowerCase())
+				recipe.ingredients.some(
+					(ingredient) =>
+						this.removeAccents(ingredient.ingredient.toLowerCase()) === this.removeAccents(tag.toLowerCase())
+				)
 			)
 			return this.filteredRecipes
 		} else if (tag && type === 'appliances') {
 			this.filteredRecipes = this.getRecipesFilteredBySearch().filter(
-				(recipe) => recipe.appliance.toLowerCase() === tag.toLowerCase()
+				(recipe) => this.removeAccents(recipe.appliance.toLowerCase()) === this.removeAccents(tag.toLowerCase())
 			)
 			return this.filteredRecipes
 		} else if (tag && type === 'ustensils') {
 			this.filteredRecipes = this.getRecipesFilteredBySearch().filter((recipe) =>
-				recipe.ustensils.some((ustensil) => ustensil.toLowerCase() === tag.toLowerCase())
+				recipe.ustensils.some(
+					(ustensil) => this.removeAccents(ustensil.toLowerCase()) === this.removeAccents(tag.toLowerCase())
+				)
 			)
 			return this.filteredRecipes
 		} else {
@@ -159,9 +122,11 @@ export class Recipes {
 	mainSearch(recipes, text) {
 		return recipes.filter(
 			(recipe) =>
-				recipe.name.toLowerCase().includes(text.toLowerCase()) ||
-				recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase().includes(text.toLowerCase())) ||
-				recipe.description.toLowerCase().includes(text.toLowerCase())
+				this.removeAccents(recipe.name.toLowerCase()).includes(this.removeAccents(text.toLowerCase())) ||
+				recipe.ingredients.some((ingredient) =>
+					this.removeAccents(ingredient.ingredient.toLowerCase()).includes(this.removeAccents(text.toLowerCase()))
+				) ||
+				this.removeAccents(recipe.description.toLowerCase()).includes(this.removeAccents(text.toLowerCase()))
 		)
 	}
 
@@ -171,7 +136,10 @@ export class Recipes {
 		// 	recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase().includes(tag.toLowerCase()))
 		// )
 		this.filteredRecipes = this.getRecipesFilteredBySearch().filter((recipe) =>
-			recipe.ingredients.some((ingredient) => ingredient.ingredient.toLowerCase() === tag.toLowerCase())
+			recipe.ingredients.some(
+				(ingredient) =>
+					this.removeAccents(ingredient.ingredient.toLowerCase()) === this.removeAccents(tag.toLowerCase())
+			)
 		)
 		return this.filteredRecipes
 	}
@@ -179,7 +147,7 @@ export class Recipes {
 	// Méthode pour filtrer les recettes par appareil dans le tableau recipes à partir du tag sélectionné
 	applianceSearch(tag) {
 		this.filteredRecipes = this.getRecipesFilteredBySearch().filter(
-			(recipe) => recipe.appliance.toLowerCase() === tag.toLowerCase()
+			(recipe) => this.removeAccents(recipe.appliance.toLowerCase()) === this.removeAccents(tag.toLowerCase())
 		)
 		return this.filteredRecipes
 	}
@@ -187,7 +155,9 @@ export class Recipes {
 	// Méthode pour filtrer les recettes par ustensile dans le tableau recipes à partir du tag sélectionné
 	ustensilsSearch(tag) {
 		this.filteredRecipes = this.getRecipesFilteredBySearch().filter((recipe) =>
-			recipe.ustensils.some((ustensil) => ustensil.toLowerCase() === tag.toLowerCase())
+			recipe.ustensils.some(
+				(ustensil) => this.removeAccents(ustensil.toLowerCase()) === this.removeAccents(tag.toLowerCase())
+			)
 		)
 		return this.filteredRecipes
 	}
