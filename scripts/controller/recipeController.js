@@ -3,87 +3,96 @@ import { Event } from './Event.js'
 
 export class ControllerRecipes {
 	constructor(model) {
-		this.model = model
-		this.searchInput = document.querySelector('#search-zone')
-		this.ingredientSearchInput = document.querySelector('#ingredient-input')
-		this.applianceSearchInput = document.querySelector('#appliance-input')
-		this.ustensilsSearchInput = document.querySelector('#ustensils-input')
+		this.model = model;
+		this.debouncedHandleInput = this.debounce(this.handleInput.bind(this), 300);
+		this.searchInput = document.querySelector('#search-zone');
+		this.ingredientSearchInput = document.querySelector('#ingredient-input');
+		this.applianceSearchInput = document.querySelector('#appliance-input');
+		this.ustensilsSearchInput = document.querySelector('#ustensils-input');
 		// Je crée un tableau qui va contenir les tags sélectionnés
-		this.selectedTags = this.model.getSelectedTags()
-		this.tagToDisplay = ''
+		this.selectedTags = this.model.getSelectedTags();
+		this.tagToDisplay = '';
 
-		this.ingredientArray = []
-		this.applianceArray = []
-		this.ustensilsArray = []
-		this.mainFilteredRecipes = []
-		this.resetFilteredRecipes = []
-		this.mainInputLength = 0
+		this.ingredientArray = [];
+		this.applianceArray = [];
+		this.ustensilsArray = [];
+		this.mainFilteredRecipes = [];
+		this.resetFilteredRecipes = [];
+		this.mainInputLength = 0;
 
 		// gestion des événements
-		this.event = new Event()
+		this.event = new Event();
 
 		// Je crée et j'écoute les événements liés aux recherches par ingrédient, appareil et ustensile
-		this.event.addListener(this.handleIngredientSearch.bind(this))
-		this.event.addListener(this.handleApplianceSearch.bind(this))
-		this.event.addListener(this.handleUstensilsSearch.bind(this))
+		this.event.addListener(this.handleIngredientSearch.bind(this));
+		this.event.addListener(this.handleApplianceSearch.bind(this));
+		this.event.addListener(this.handleUstensilsSearch.bind(this));
 
-		this.ingredientSearchInput.addEventListener('input', (event) => {
-			this.event.trigger(event)
-		})
-		this.applianceSearchInput.addEventListener('input', (event) => {
-			this.event.trigger(event)
-		})
-		this.ustensilsSearchInput.addEventListener('input', (event) => {
-			this.event.trigger(event)
-		})
+		this.ingredientSearchInput.addEventListener('input', this.debouncedHandleInput);
+		this.applianceSearchInput.addEventListener('input', this.debouncedHandleInput);
+		this.ustensilsSearchInput.addEventListener('input', this.debouncedHandleInput);
 
 		// Je crée une instance de ma vue pour pouvoir afficher les recettes
-		this.view = new ViewRecipes()
+		this.view = new ViewRecipes();
 		// Je crée une instance de ma classe FilterTagView pour pouvoir afficher les tags de filtre
-		this.tagView = new FilterTagView()
+		this.tagView = new FilterTagView();
 	}
 
-	// On envoie le texte saisi dans la barre de recherche dans le controleur qui va filtrer les recettes dans le Modèle
+	debounce(func, wait) {
+		let timeout;
+		return function executedFunction(...args) {
+			const later = () => {
+				clearTimeout(timeout);
+				func(...args);
+			};
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+		};
+	}
+
+	handleInput(event) {
+		this.event.trigger(event);
+	}
 
 	mainSearch() {
 		this.searchInput.addEventListener('input', (event) => {
-			this.searchText = event.target.value
-			this.mainInputLength = this.searchText.length
-			this.model.mainSearch = this.searchText
+			this.searchText = event.target.value;
+			this.mainInputLength = this.searchText.length;
+			this.model.mainSearch = this.searchText;
 
 			// On crée une variable qui va contenir les recettes filtrées par la recherche
-			const mainFilteredRecipes = this.model.getRecipesFilteredBySearch()
-			let resetFilteredRecipes = this.model.getRecipesFilteredBySearch()
+			const mainFilteredRecipes = this.model.getRecipesFilteredBySearch();
+			let resetFilteredRecipes = this.model.getRecipesFilteredBySearch();
 
 			// Si la longueur de la recherche est supérieure à 3, on affiche les recettes filtrées
 			if (this.mainInputLength >= 3) {
 				if (mainFilteredRecipes.length != 0) {
-					this.view.displayRecipesList(mainFilteredRecipes)
+					this.view.displayRecipesList(mainFilteredRecipes);
 					this.view.displayButtonLists(
 						this.model.getIngredientList(),
 						this.model.getApplianceList(),
 						this.model.getUstensilList()
-					)
-					this.handleTagSelected()
-					this.handleTagUnSelected()
+					);
+					this.handleTagSelected();
+					this.handleTagUnSelected();
 				} else {
-					this.view.checkDisplayNoRecipeMessage()
+					this.view.checkDisplayNoRecipeMessage();
 				}
 
 				// Sinon, on affiche toutes les recettes
 			}
 			if (this.mainInputLength <= 2 || this.mainInputLength == 0) {
-				resetFilteredRecipes = this.model.resetRecipes()
-				this.view.displayRecipesList(resetFilteredRecipes)
+				resetFilteredRecipes = this.model.resetRecipes();
+				this.view.displayRecipesList(resetFilteredRecipes);
 				this.view.displayButtonLists(
 					this.model.getIngredientList(),
 					this.model.getApplianceList(),
 					this.model.getUstensilList()
-				)
-				this.handleTagSelected()
-				this.handleTagUnSelected()
+				);
+				this.handleTagSelected();
+				this.handleTagUnSelected();
 			}
-		})
+		});
 	}
 
 	// Les 3 méthodes d'obtention des listes d'ingrédients, d'appareils et d'ustensiles pour le premier affichage
