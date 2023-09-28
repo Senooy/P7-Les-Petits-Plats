@@ -38,6 +38,8 @@ export class ControllerRecipes {
 		this.tagView = new FilterTagView();
 	}
 
+	// 
+
 	debounce(func, wait) {
 		let timeout;
 		return function executedFunction(...args) {
@@ -59,38 +61,12 @@ export class ControllerRecipes {
 			this.searchText = event.target.value;
 			this.mainInputLength = this.searchText.length;
 			this.model.mainSearch = this.searchText;
-
-			// On crée une variable qui va contenir les recettes filtrées par la recherche
-			const mainFilteredRecipes = this.model.getRecipesFilteredBySearch();
-			let resetFilteredRecipes = this.model.getRecipesFilteredBySearch();
-
-			// Si la longueur de la recherche est supérieure à 3, on affiche les recettes filtrées
-			if (this.mainInputLength >= 3) {
-				if (mainFilteredRecipes.length != 0) {
-					this.view.displayRecipesList(mainFilteredRecipes);
-					this.view.displayButtonLists(
-						this.model.getIngredientList(),
-						this.model.getApplianceList(),
-						this.model.getUstensilList()
-					);
-					this.handleTagSelected();
-					this.handleTagUnSelected();
-				} else {
-					this.view.checkDisplayNoRecipeMessage();
-				}
-
-				// Sinon, on affiche toutes les recettes
-			}
-			if (this.mainInputLength <= 2 || this.mainInputLength == 0) {
-				resetFilteredRecipes = this.model.resetRecipes();
-				this.view.displayRecipesList(resetFilteredRecipes);
-				this.view.displayButtonLists(
-					this.model.getIngredientList(),
-					this.model.getApplianceList(),
-					this.model.getUstensilList()
-				);
-				this.handleTagSelected();
-				this.handleTagUnSelected();
+	
+			// Si la longueur de la recherche est supérieure à 2, on appelle la méthode filterRecipes
+			if (this.mainInputLength > 2) {
+				this.filterRecipes();
+			} else {  // Sinon, on réinitialise l'affichage des recettes
+				this.resetRecipes();
 			}
 		});
 	}
@@ -181,73 +157,79 @@ export class ControllerRecipes {
 		}
 	}
 
-	// Méthode d'écoute des tags sélectionnés dans les listes déroulantes
-
+    // Méthode principale pour filtrer et afficher les recettes
+	filterRecipes() {
+		let filteredRecipes = this.model.getRecipesFilteredBySearch();
+		this.selectedTags.forEach((tag) => {
+			filteredRecipes = filteredRecipes.filter((recipe) =>
+				this.model.getRecipesFilteredBySearchAndTags(tag.value, tag.type).includes(recipe)
+			);
+		});
+		if (filteredRecipes.length !== 0) {
+			this.view.displayRecipesList(filteredRecipes);
+			this.view.displayButtonLists(
+				this.model.getIngredientList(),
+				this.model.getApplianceList(),
+				this.model.getUstensilList()
+			);
+		} else {
+			this.view.checkDisplayNoRecipeMessage();
+		}
+	}
+	
+	resetRecipes() {
+		this.view.displayRecipesList(this.model.recipes);
+		this.view.displayButtonLists(
+			this.model.getIngredientList(),
+			this.model.getApplianceList(),
+			this.model.getUstensilList()
+		);
+	}
+    
 	handleTagSelected() {
-		this.handleToggleButtons()
-		const listOfAllTags = document.querySelectorAll('.accordion-body ul li')
+		this.handleToggleButtons();
+		const listOfAllTags = document.querySelectorAll('.accordion-body ul li');
 		for (let tag of listOfAllTags) {
 			tag.addEventListener('click', () => {
-				const keywordArray = tag.closest('ul').id.replace('List', '')
-				this.tagToDisplay = tag.textContent
-				// je vérifie si le tag sélectionné est déjà affiché
-				const isInTags = this.selectedTags.some((tag) => tag.value === this.tagToDisplay)
-
-				// Je récupère l'élément parent de l'élément cliqué et je referme le collapse du bouton
-				let collapseElement = tag.closest('.accordion-collapse')
-				let collapseInstance = bootstrap.Collapse.getInstance(collapseElement)
+				const keywordArray = tag.closest('ul').id.replace('List', '');
+				this.tagToDisplay = tag.textContent;
+				const isInTags = this.selectedTags.some((tag) => tag.value === this.tagToDisplay);
+	
+				let collapseElement = tag.closest('.accordion-collapse');
+				let collapseInstance = bootstrap.Collapse.getInstance(collapseElement);
 				if (collapseInstance) {
-					collapseInstance.hide()
+					collapseInstance.hide();
 				}
-
-				// On ajoute le tag sélectionné au tableau créé dans le modèle s'il n'est pas déjà présent
+	
 				if (!isInTags) {
-					this.model.addTag(keywordArray, this.tagToDisplay)
-					this.tagView.add(keywordArray, this.tagToDisplay)
+					this.model.addTag(keywordArray, this.tagToDisplay);
+					this.tagView.add(keywordArray, this.tagToDisplay);
 				}
-				// On affiche les recettes filtrées par les tags sélectionnés
-				if (this.model.getRecipesFilteredBySearchAndTags(this.tagToDisplay, keywordArray)) {
-					this.view.displayRecipesList(this.model.getRecipesFilteredBySearchAndTags(this.tagToDisplay, keywordArray))
-					this.view.displayButtonLists(
-						this.model.getIngredientList(),
-						this.model.getApplianceList(),
-						this.model.getUstensilList()
-					)
-					this.handleToggleButtons()
-					this.handleTagSelected()
-				} else {
-					this.view.checkDisplayNoRecipeMessage()
-				}
-			})
+	
+				this.filterRecipes();
+			});
 		}
-		// this.view.displayRecipesList(this.model.getRecipesFilteredBySearchAndTags())
-		this.handleTagUnSelected()
+		this.handleTagUnSelected();
 	}
-
-	// Méthode d'écoute des tags supprimés
-
+	
 	handleTagUnSelected() {
-		this.selectedTags = this.model.getSelectedTags()
-		const tagCloseBtn = document.querySelectorAll('.tag-close')
+		this.selectedTags = this.model.getSelectedTags();
+		const tagCloseBtn = document.querySelectorAll('.tag-close');
 		tagCloseBtn.forEach((tag) => {
 			tag.addEventListener('click', (event) => {
-				// On récupère le type du tag à supprimer
-				// On trouve le bouton parent
-				const button = event.target.closest('button')
-				// Récupérer le type du tag à supprimer
-				const tagType = button.getAttribute('data-type')
-				// On supprime le tag de la liste des tags sélectionnés dans la Vue
-				this.tagView.remove(event)
-				// On récupère le tag à supprimer
-				const tagToDelete = event.target.closest('.tag')
-				const tagContent = tagToDelete.textContent.split('\n')[0].trim()
-				// On supprime le tag de la liste des tags sélectionnés dans le Modèle
-				this.model.removeTag(this.selectedTags, tagType, tagContent)
-				this.selectedTags = this.model.getSelectedTags()
-				this.handleSearchAfterDeletedTag()
-			})
-		})
+				const button = event.target.closest('button');
+				const tagType = button.getAttribute('data-type');
+				this.tagView.remove(event);
+				const tagToDelete = event.target.closest('.tag');
+				const tagContent = tagToDelete.textContent.split('\n')[0].trim();
+				this.model.removeTag(this.selectedTags, tagType, tagContent);
+				this.selectedTags = this.model.getSelectedTags();
+	
+				this.filterRecipes();
+			});
+		});
 	}
+	
 
 	// Méthode de filtrage des mots-clés restants et d'affichage des recettes en fonction //
 
