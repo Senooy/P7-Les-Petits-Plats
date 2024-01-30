@@ -9,10 +9,31 @@
     font-family: 'Lato', 'Roboto', sans-serif;
 }
 
+/* Style du header */
+
+#logo_txt {
+    font-family: 'DM Sans', sans-serif;
+    color: #D04F4F;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 47px;
+}
+
 /* Barre de recherche */
 
 .input-box {
     position: relative;
+}
+
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    color: #000;
+    overflow: hidden;
 }
 
 .input-box img {
@@ -79,6 +100,16 @@
     font-size: 12px;
 }
 
+@media (width <=1200px) {
+    .smallFont {
+        font-size: 0.8rem;
+    }
+}
+
+.heightFix {
+    height: 90%;
+}
+
 .card-title {
     font-size: 1rem;
 }
@@ -102,7 +133,6 @@
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 6;
-    line-clamp: 6;
     -webkit-box-orient: vertical;
 }
 

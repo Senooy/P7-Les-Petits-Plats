@@ -42,16 +42,16 @@ export class ViewRecipes {
 				}" class="card-img-top" height="178px">
                         <div class="card-body rounded-bottom">
                             <div id="recipe-name-time" class="d-flex flex-row justify-content-between">
-                                <h5 class="card-title w-75">${recipe.name}</h5>
-                                <div class="recipe-time">
+                                <h2 class="card-title w-75">${recipe.name}</h2>
+                                <div class="recipe-time text-nowrap">
                                     <span class="timeIcon me-1">
                                         <img src="./assets/icons/time.svg" alt="icone d'horloge">
                                     </span>
-                                    <span id="timeValue">${recipe.time} min</span>
+                                    <span id="timeValue" class="smallFont">${recipe.time} min</span>
                                 </div>
                             </div>
-                            <div class="card-text py-3 d-flex flex-row">
-                                <ul class="ingredients-list w-50 pl-0">
+                            <div class="card-text py-2 d-flex flex-row heightFix">
+                                <ul class="ingredients-list w-50 pe-2">
                                     ${recipe.ingredients
 																			.map((ingredient) => {
 																				return `<li>${ingredient.ingredient}: ${

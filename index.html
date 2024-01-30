@@ -18,7 +18,8 @@
 
 <body>
     <header class="mt-3 text-center">
-        <img src="./assets/logo/logo.svg" alt="les petits plats">
+        <img src="./assets/logo/logo_petits_plats.svg" alt="logo les petits plats">
+        <h1 id="logo_txt">Les petits plats</h1>
     </header>
     <main class="container mt-3">
 
@@ -27,7 +28,9 @@
 
             <div class="input-group-sm">
                 <div class="input-box mx-auto">
-                    <input type="text" class="form-control border-0 mb-4" placeholder="Rechercher une recette">
+                    <label id="mainSearchLabel" for="mainSearch" class="sr-only">Recherche principale</label>
+                    <input id="mainSearch" type="text" class="form-control border-0 mb-4"
+                        placeholder="Rechercher une recette" aria-labelledby="mainSearchLabel">
                     <img src="./assets/icons/search.svg" alt="icone loupe de la zone de recherche">
                 </div>
             </div>
@@ -35,18 +38,20 @@
         </div>
 
         <!-- Zone de tags -->
-        <div id="tags-zone" class="mt3 d-inline-flex flex-row justify-content-start align-items-center"></div>
+        <div id="tags-zone" class="mt3 d-flex flex-wrap flex-row justify-content-start align-items-center"></div>
 
         <!-- Zone filtres de recettes -->
         <div id="filters-zone" class="mt-3">
             <div class="d-lg-flex accordion" id="accordionFilterTags">
                 <div class="accordion-item me-lg-5">
                     <div class="accordion-header" id="headingOne">
-                        <div id="ingredientButtonHeader" class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
-                            role="combobox">
+                        <div id="ingredientButtonHeader" class="filter_button accordion-button collapsed"
+                            data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                            aria-controls="collapseOne" role="combobox">
+                            <label id="ingredientSearchLabel" for="ingredient-input" class="sr-only">Recherche par
+                                ingrédient</label>
                             <input id="ingredient-input" class="form-control text-white" type="text"
-                                placeholder="Ingredients" aria-label="input ingredients">
+                                placeholder="Ingredients" aria-labelledby="ingredientSearchLabel">
                         </div>
                     </div>
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
@@ -58,11 +63,13 @@
                 </div>
                 <div class="accordion-item me-lg-5 mt-3 mt-lg-0">
                     <div class="accordion-header" id="headingTwo">
-                        <div id="applianceButtonHeader" class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
-                            role="combobox">
+                        <div id="applianceButtonHeader" class="filter_button accordion-button collapsed"
+                            data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                            aria-controls="collapseTwo" role="combobox">
+                            <label id="applianceSearchLabel" for="appliance-input" class="sr-only">Recherche par
+                                appareil</label>
                             <input id="appliance-input" class="form-control text-white" type="text"
-                                placeholder="Appareils" aria-label="input appliances">
+                                placeholder="Appareils" aria-labelledby="applianceSearchLabel">
                         </div>
                     </div>
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
@@ -74,11 +81,13 @@
                 </div>
                 <div class="accordion-item mt-3 mt-lg-0">
                     <div class="accordion-header" id="headingThree">
-                        <div id="ustensilsButtonHeader" class="filter_button accordion-button collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree"
-                            role="combobox">
+                        <div id="ustensilsButtonHeader" class="filter_button accordion-button collapsed"
+                            data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                            aria-controls="collapseThree" role="combobox">
+                            <label id="ustensilsSearchLabel" for="ustensils-input" class="sr-only">Recherche par
+                                ustensile</label>
                             <input id="ustensils-input" class="form-control text-white" type="text"
-                                placeholder="Ustensiles" aria-label="input ustensils">
+                                placeholder="Ustensiles" aria-labelledby="ustensilsSearchLabel">
                         </div>
                     </div>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
