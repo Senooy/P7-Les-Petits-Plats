@@ -6,6 +6,11 @@
 
 > Projet 7 - Développez un algorithme de recherche en JavaScript
 
+# Fiche d'investigation de fonctionnalité
+
+https://www.notion.so/Fiche-d-investigation-de-fonctionnalit-36299417183646bda2a8d622163c3124?pvs=4
+
+
 ## Contexte
 
 Vous êtes développeur web chez Les Petits Plats, une entreprise qui propose des recettes de cuisine à ses clients. L'entreprise souhaite développer une application web qui permettra à ses clients de trouver des recettes de cuisine en fonction de leurs envies et de leurs besoins.
